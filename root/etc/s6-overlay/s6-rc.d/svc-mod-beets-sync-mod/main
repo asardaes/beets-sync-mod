@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/bin/bash
 
 INGEST_DIR="${BSM_INGEST_DIR:-/downloads}"
 PERIOD="${BSM_PERIOD:-1h}"
