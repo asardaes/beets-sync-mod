@@ -7,7 +7,7 @@ COPY root/ /fakeroot
 ENV GOSU_VERSION 1.17
 RUN set -eux; \
 	\
-	apk add --no-cache --virtual .gosu-deps \
+	apk add --no-cache \
 		ca-certificates \
 		dpkg \
 		gnupg \
@@ -23,7 +23,7 @@ RUN set -eux; \
 	gpg --batch --verify /fakeroot/usr/local/bin/gosu.asc /fakeroot/usr/local/bin/gosu; \
 	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME" /fakeroot/usr/local/bin/gosu.asc; \
-	chmod +x /usr/local/bin/gosu
+	chmod +x /fakeroot/usr/local/bin/gosu
 
 FROM scratch
 
