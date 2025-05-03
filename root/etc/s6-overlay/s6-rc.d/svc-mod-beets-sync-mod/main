@@ -31,7 +31,6 @@ while true; do
                     && find . -type f -exec cp -v -t "$BSM_TRASH" --recursive --parents '{}' \+ \
                     && rm -rf "$INGEST_DIR"/*
             )
-            log "$(cat "$BEETSDIR/sync.log")"
             rm "$BEETSDIR/sync.log"
         fi
     fi
