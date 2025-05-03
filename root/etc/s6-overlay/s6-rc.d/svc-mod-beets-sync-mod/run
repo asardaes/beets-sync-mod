@@ -1,0 +1,23 @@
+#!/usr/bin/with-contenv bash
+
+INGEST_DIR="${BSM_INGEST_DIR:-/downloads}"
+PERIOD="${BSM_PERIOD:-1h}"
+
+log() {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") [BSM] - ${1}"
+}
+
+while true; do
+    if /lsiopy/bin/beet import -r --incremental --move --quiet "--log=$BEETSDIR/sync.log" /downloads &>/tmp/beets.out; then
+        log "$(cat /tmp/beets.out)"
+        if [[ $(head -n 1 /tmp/beets.out) == No\ files\ imported* ]]; then
+            rm "$BEETSDIR/sync.log"
+        elif [ -f "$BEETSDIR/sync.log" ]; then
+            NEXT_INDEX=$(ls -1 /config/sync*.log | wc -l --total=only)
+            mv "$BEETSDIR/sync.log" "$BEETSDIR/sync_${NEXT_INDEX}.log"
+            log "Manual intervention needed to import files logged in $BEETSDIR/sync_${NEXT_INDEX}.log"
+        fi
+    fi
+
+    sleep "$PERIOD"
+done
