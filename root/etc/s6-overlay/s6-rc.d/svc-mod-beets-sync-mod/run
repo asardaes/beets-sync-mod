@@ -1,4 +1,3 @@
 #!/usr/bin/with-contenv bash
 
-SCRIPT_DIR=$(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
-exec gosu "$PUID:$PGUID" "$SCRIPT_DIR/main" "$@"
+exec gosu "$PUID:$PGUID" /etc/s6-overlay/s6-rc.d/svc-mod-beets-sync-mod/main "$@"
