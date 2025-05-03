@@ -6,6 +6,7 @@ COPY root/ /fakeroot/
 
 ENV GOSU_VERSION=1.17
 RUN set -eux; \
+    mkdir -p /fakeroot/usr/local/bin; \
 	\
 	apk add --no-cache \
 		ca-certificates \
