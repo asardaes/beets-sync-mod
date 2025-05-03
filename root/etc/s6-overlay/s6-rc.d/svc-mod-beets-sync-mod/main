@@ -1,0 +1,32 @@
+#!/usr/bin/with-contenv bash
+
+INGEST_DIR="${BSM_INGEST_DIR:-/downloads}"
+PERIOD="${BSM_PERIOD:-1h}"
+
+log() {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") [BSM] - ${1}"
+}
+
+if BEETS_MUSIC_DIR=$(grep -m 1 'directory:' "$BEETSDIR/config.yaml" | cut -d ':' -f 2 | xargs); then
+    log "Periodically reimporting incrementally: $BEETS_MUSIC_DIR"
+fi
+
+while true; do
+    if [ -n "$BEETS_MUSIC_DIR" ] && ! /lsiopy/bin/beet import --nocopy --noautotag --quiet --quiet-fallback=asis --incremental "$BEETS_MUSIC_DIR"; then
+        log "Reimport failed."
+    fi
+    if /lsiopy/bin/beet import -r --incremental --move --quiet "--log=$BEETSDIR/sync.log" "$INGEST_DIR" &>/tmp/beets.out; then
+        if [ -s /tmp/beets.out ]; then
+            log "$(cat /tmp/beets.out)"
+        fi
+        if [[ $(head -n 1 /tmp/beets.out) == No\ files\ imported* ]]; then
+            rm "$BEETSDIR/sync.log"
+        elif [ -f "$BEETSDIR/sync.log" ]; then
+            NEXT_INDEX=$(ls -1 /config/sync*.log | wc -l --total=only)
+            mv "$BEETSDIR/sync.log" "$BEETSDIR/sync_${NEXT_INDEX}.log"
+            log "Manual intervention needed to import files logged in $BEETSDIR/sync_${NEXT_INDEX}.log"
+        fi
+    fi
+
+    sleep "$PERIOD"
+done
