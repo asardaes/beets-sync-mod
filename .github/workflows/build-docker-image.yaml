@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - Dockerfile
-      - root
+      - 'root/**'
     # Publish semver tags as releases.
     tags: [ 'v*' ]
   workflow_call:
