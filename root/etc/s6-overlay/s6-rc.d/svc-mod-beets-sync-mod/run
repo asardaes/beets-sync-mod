@@ -9,7 +9,9 @@ log() {
 
 while true; do
     if /lsiopy/bin/beet import -r --incremental --move --quiet "--log=$BEETSDIR/sync.log" "$INGEST_DIR" &>/tmp/beets.out; then
-        log "$(cat /tmp/beets.out)"
+        if [ -s /tmp/beets.out ]; then
+            log "$(cat /tmp/beets.out)"
+        fi
         if [[ $(head -n 1 /tmp/beets.out) == No\ files\ imported* ]]; then
             rm "$BEETSDIR/sync.log"
         elif [ -f "$BEETSDIR/sync.log" ]; then
