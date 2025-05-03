@@ -2,9 +2,9 @@
 
 FROM alpine AS tmpstage
 
-COPY root/ /fakeroot
+COPY root/ /fakeroot/
 
-ENV GOSU_VERSION 1.17
+ENV GOSU_VERSION=1.17
 RUN set -eux; \
 	\
 	apk add --no-cache \
