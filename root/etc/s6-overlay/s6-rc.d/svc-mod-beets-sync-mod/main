@@ -19,19 +19,27 @@ while true; do
         if [ -s /tmp/beets.out ]; then
             log "$(cat /tmp/beets.out)"
         fi
+
         if [[ $(head -n 1 /tmp/beets.out) == No\ files\ imported* ]]; then
             rm "$BEETSDIR/sync.log"
         elif [ -f "$BEETSDIR/sync.log" ] && grep -q 'skip ' "$BEETSDIR/sync.log"; then
             NEXT_INDEX=$(ls -1 /config/sync*.log | wc -l --total=only)
             mv "$BEETSDIR/sync.log" "$BEETSDIR/sync_${NEXT_INDEX}.log"
             log "Manual intervention needed to import files logged in $BEETSDIR/sync_${NEXT_INDEX}.log"
-        elif [ -d "$BSM_TRASH" ]; then
+        elif [ -d "$BSM_TRASH" ] && [ -z "$(find "$BEETSDIR" -type f -name 'sync_*.log')" ]; then
             (
                 cd "$INGEST_DIR" \
                     && find . -type f -exec cp -v -t "$BSM_TRASH" --recursive --parents '{}' \+ \
                     && rm -rf "$INGEST_DIR"/*
             )
             rm "$BEETSDIR/sync.log"
+        else
+            rm "$BEETSDIR/sync.log"
+            REMAINING_FILES=$(find "$INGEST_DIR" -type f)
+            if [ -n "$REMAINING_FILES" ]; then
+                log "The following files haven't been cleaned up from the ingestion folder:"
+                echo "$REMAINING_FILES"
+            fi
         fi
     fi
 
