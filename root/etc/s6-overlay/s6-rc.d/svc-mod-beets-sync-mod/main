@@ -12,7 +12,7 @@ if BEETS_MUSIC_DIR=$(grep -m 1 'directory:' "$BEETSDIR/config.yaml" | cut -d ':'
 fi
 
 while true; do
-    if [ -n "$BEETS_MUSIC_DIR" ] && ! /lsiopy/bin/beet import --nocopy --noautotag --quiet --quiet-fallback=asis --incremental "$BEETS_MUSIC_DIR"; then
+    if [ -d "$BEETS_MUSIC_DIR" ] && ! /lsiopy/bin/beet import --nocopy --noautotag --quiet --quiet-fallback=asis --incremental "$BEETS_MUSIC_DIR"; then
         log "Reimport failed."
     fi
     if /lsiopy/bin/beet import -r --incremental --move --quiet "--log=$BEETSDIR/sync.log" "$INGEST_DIR" &>/tmp/beets.out; then
