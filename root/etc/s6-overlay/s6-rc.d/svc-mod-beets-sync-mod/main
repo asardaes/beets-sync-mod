@@ -27,12 +27,14 @@ while true; do
             mv "$BEETSDIR/sync.log" "$BEETSDIR/sync_${NEXT_INDEX}.log"
             log "Manual intervention needed to import files logged in $BEETSDIR/sync_${NEXT_INDEX}.log"
         elif [ -d "$BSM_TRASH" ] && [ -z "$(find "$BEETSDIR" -type f -name 'sync_*.log')" ]; then
-            (
-                cd "$INGEST_DIR" \
-                    && find . -type f -exec cp -v -t "$BSM_TRASH" --recursive --parents '{}' \+ \
-                    && rm -rf "$INGEST_DIR"/*
-            )
             rm "$BEETSDIR/sync.log"
+            find "$INGEST_DIR" -mindepth 1 -type d -empty -delete
+            REMAINING_FILES=$(find "$INGEST_DIR" -type f)
+            if [ -n "$REMAINING_FILES" ]; then
+                log "Moving the following files from the ingestion folder to $BSM_TRASH:"
+                echo "$REMAINING_FILES"
+                mv "$INGEST_DIR"/* "$BSM_TRASH/"
+            fi
         else
             rm "$BEETSDIR/sync.log"
             REMAINING_FILES=$(find "$INGEST_DIR" -type f)
