@@ -1,0 +1,11 @@
+#!/bin/bash
+
+beet import -mt "--from-logfile=$1"
+read -p "Clean up (y/n)? " ans
+
+if [ "$ans" == "" ] || [ "$ans" == "y" ]; then
+    while IFS="" read -r p || [ -n "$p" ]; do
+        rm -r "$(echo "$p" | cut -d ' ' -f '2-')"
+    done < <(tail -n +2 "$1")
+    rm "$1"
+fi
