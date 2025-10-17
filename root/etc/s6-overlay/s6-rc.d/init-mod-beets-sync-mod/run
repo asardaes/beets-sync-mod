@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-beets_plug_dir=$(find /lsiopy/lib -maxdepth 3 -type d -name beetsplug)
-
-if [ -n "$beets_plug_dir" ]; then
-  curl -sfSL https://raw.githubusercontent.com/asardaes/beets/refs/heads/feature/mbpseudo-plugin/beetsplug/mbpseudo.py >"$beets_plug_dir/mbpseudo.py"
-else
-  echo "ERROR could not find beets plugin directory under /lsiopy/lib"
-fi
