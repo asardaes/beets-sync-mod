@@ -4,7 +4,7 @@ FROM alpine AS tmpstage
 
 COPY root/ /fakeroot/
 
-ENV GOSU_VERSION=1.19
+ENV GOSU_VERSION=1.20
 RUN set -eux; \
     mkdir -p /fakeroot/usr/local/bin; \
 	\
